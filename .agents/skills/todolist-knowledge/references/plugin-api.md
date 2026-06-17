@@ -102,6 +102,56 @@ Render plugin view at the top of the todolist, above the progress bar:
 
 The view is loaded as an inline iframe with auto-height. It receives tree data on every update and supports the full `plugin-call` / `plugin-result` protocol.
 
+Head view lifecycle:
+1. Host sends `plugin-init` with `filePath`, `theme`, and optionally `lang`
+2. View should send `plugin-request-tree` to get initial tree data
+3. Host sends `plugin-tree-update` with current tree, and again on every subsequent change
+
+Head view `viewSize` is optional — the iframe auto-sizes to `body.offsetHeight`. If provided, `viewSize.width` is ignored (head views stretch full width) and `viewSize.height` sets the initial/max height.
+
+Complete head view `package.json` example:
+
+```json
+{
+  "name": "@aicupa/plugin-my-indicator",
+  "version": "1.0.0",
+  "main": "./service",
+  "view": "./view",
+  "viewSize": { "width": 600, "height": 40 },
+  "pluginContributes": { "views": { "head": true } },
+  "dependencies": { "@aicupa/api": "^1.0.1" }
+}
+```
+
+For head views that only analyze and display tree data, the service can be minimal (or empty) — do analysis client-side in the view using `plugin-tree-update` data. See `plugin-view.md` → "Client-Side Tree Analysis Pattern".
+
+### views.topbar
+
+Render plugin view inline in the page title bar (top-right area, alongside the navigator):
+
+```json
+"views": { "topbar": true }
+```
+
+Topbar views use the same protocol as head views (`plugin-init`, `plugin-tree-update`, `plugin-call`/`plugin-result`). The difference is rendering position and layout:
+- **head**: full-width block iframe above the progress bar
+- **topbar**: inline iframe in the PageTitle area, auto-sized to content width and height
+
+Topbar views are hidden (but still mounted and receiving events) while the todolist is loading. Only shown on non-mobile, non-simple-mode views.
+
+Complete topbar view `package.json` example:
+
+```json
+{
+  "name": "@aicupa/plugin-my-indicator",
+  "version": "1.0.0",
+  "main": "./service",
+  "view": "./view",
+  "pluginContributes": { "views": { "topbar": true } },
+  "dependencies": { "@aicupa/api": "^1.0.1" }
+}
+```
+
 ## Installation & Storage
 
 - **npm**: Plugins with `@aicupa/plugin-` prefix can be searched/installed from the Plugin Marketplace

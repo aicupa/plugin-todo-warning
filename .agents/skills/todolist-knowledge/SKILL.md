@@ -12,8 +12,8 @@ Reference for working with the Todolist desktop app (Electron). This skill cover
 | File | When to Read |
 |------|-------------|
 | `references/todo-format.md` | Working with `.todo` files — full type definitions, field details, tag system, examples, common operations |
-| `references/plugin-api.md` | Building plugin services — full API method table, pluginContributes spec (contextMenus, events, views.head), installation |
-| `references/plugin-view.md` | Building plugin views — message protocol, complete HTML template, pitfalls (timeout, double-unwrap, auto-height, theme) |
+| `references/plugin-api.md` | Building plugin services — full API method table, pluginContributes spec (contextMenus, events, views.head, views.topbar), installation |
+| `references/plugin-view.md` | Building plugin views — message protocol, complete HTML template, client-side tree analysis pattern, i18n/lang detection, dark mode detection, pitfalls (timeout, double-unwrap, auto-height, theme) |
 
 ## Quick Reference
 
@@ -99,8 +99,19 @@ Message types:
 - `plugin-call` (view→host): Call service method `{ type, id, method, params }`
 - `plugin-result` (host→view): Response `{ type, id, result }`
 - `plugin-init` (host→view): Init with `{ filePath, theme: { color, backgroundColor } }`
-- `plugin-tree-update` (host→view): Tree data push (head views)
-- `plugin-request-tree` (view→host): Request current tree (head views)
+- `plugin-tree-update` (host→view): Tree data push (head/topbar views)
+- `plugin-request-tree` (view→host): Request current tree (head/topbar views)
+
+View types:
+- `views.head` — full-width block iframe above the progress bar
+- `views.topbar` — inline iframe in the PageTitle area (top-right, alongside navigator). Hidden while loading, non-mobile/non-simple-mode only.
+
+Both types share the same protocol. Choose `topbar` for compact indicators, `head` for wider content.
+
+Head/topbar view tips:
+- Views receive `plugin-tree-update` automatically on every tree change — use this for client-side analysis instead of calling the service when only read access is needed
+- `plugin-init` may include `lang` — use it (with `navigator.language` fallback) for i18n
+- Detect dark mode from `theme.backgroundColor` luminance to apply `.dark` CSS class
 
 Critical pitfalls:
 1. **Timeout**: Always add a 2s timeout to `callPlugin` — without it, promises hang forever if host isn't ready
@@ -108,4 +119,4 @@ Critical pitfalls:
 3. **Head view height**: Set `html, body { height: auto; overflow: hidden }` for auto-height to work
 4. **Theme**: Apply `theme.color` / `theme.backgroundColor` from `plugin-init` for dark/light mode
 
-For the complete HTML template and detailed pitfall explanations, read `references/plugin-view.md`.
+For the complete HTML template, client-side analysis pattern, and detailed pitfall explanations, read `references/plugin-view.md`.

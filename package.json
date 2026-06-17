@@ -1,9 +1,18 @@
 {
-  "name": "@aicupa/plugin-template",
+  "name": "@aicupa/plugin-todo-warning",
   "version": "1.0.0",
-  "description": "aicupa plugin template",
+  "description": "Workload warning indicator for Todolist",
   "main": "./service",
   "view": "./view",
+  "viewSize": {
+    "width": 500,
+    "height": 30
+  },
+  "pluginContributes": {
+    "views": {
+      "topbar": true
+    }
+  },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"

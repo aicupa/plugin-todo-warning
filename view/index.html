@@ -4,11 +4,345 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Workload</title>
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      height: auto;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 12px;
+    }
+
+    #root {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 8px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 0 7px;
+      font-size: 12px;
+      line-height: 20px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .tag-red {
+      background: #fff2f0;
+      color: #cf1322;
+      border: 1px solid #ffccc7;
+    }
+
+    .tag-orange {
+      background: #fff7e6;
+      color: #d46b08;
+      border: 1px solid #ffd591;
+    }
+
+    .tag-blue {
+      background: #e6f4ff;
+      color: #0958d9;
+      border: 1px solid #91caff;
+    }
+
+    .tag-green {
+      background: #f6ffed;
+      color: #389e0d;
+      border: 1px solid #b7eb8f;
+    }
+
+    .dark .tag-red {
+      background: #2a1215;
+      color: #ff7875;
+      border-color: #58181c;
+    }
+
+    .dark .tag-orange {
+      background: #2b1d11;
+      color: #ffc069;
+      border-color: #593815;
+    }
+
+    .dark .tag-blue {
+      background: #111a2c;
+      color: #69b1ff;
+      border-color: #15325b;
+    }
+
+    .dark .tag-green {
+      background: #162312;
+      color: #95de64;
+      border-color: #274916;
+    }
+
+    .stats {
+      opacity: 0.6;
+    }
+
+    .advice {
+      opacity: 0.45;
+      font-size: 11px;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
 </head>
 
 <body>
+  <div id="root" class="hidden"></div>
 
+  <script>
+    const i18n = {
+      en: {
+        relaxed: 'Relaxed',
+        extreme_parallel: 'Extreme (Multi-tasking)',
+        engaged: 'Engaged',
+        busy_backlog: 'Busy (Backlog)',
+        advice_relaxed: 'Progress looks good. You may add tasks appropriately.',
+        advice_extreme_parallel: 'Warning: Multiple Focus tasks disperse attention. Reduce parallelism.',
+        advice_engaged: 'You have clear focus. Keep the pace.',
+        advice_busy_backlog: 'Many pending tasks. Clean up or split long-term items.',
+      },
+      zh: {
+        relaxed: '轻松',
+        extreme_parallel: '极高 (多线程并行)',
+        engaged: '充实',
+        busy_backlog: '繁忙 (待办积压)',
+        advice_relaxed: '当前进度良好，可以适当增加任务。',
+        advice_extreme_parallel: '警告：同时 Focus 多个任务会分散注意力，建议减少并行量。',
+        advice_engaged: '当前有明确的关注点，保持节奏。',
+        advice_busy_backlog: '待办任务较多，建议清理或拆解长期待办。',
+      },
+      'zh-TW': {
+        relaxed: '軽量',
+        extreme_parallel: '極端 (多線程並行)',
+        engaged: '集中',
+        busy_backlog: '繁忙 (待辦積壓)',
+        advice_relaxed: '進捗良好，可以適當增加任務。',
+        advice_extreme_parallel: '警告：同時 Focus 多個任務會分散注意力，建議減少並行量。',
+        advice_engaged: '有明確的關注點，保持節奏。',
+        advice_busy_backlog: '待辦任務較多，建議清理或拆解長期待辦。',
+      },
+      ja: {
+        relaxed: '余裕',
+        extreme_parallel: '極めて高い (マルチタスク)',
+        engaged: '充実',
+        busy_backlog: '多忙 (タスク蓄積)',
+        advice_relaxed: '順調に進んでいます。タスクを追加しても大丈夫です。',
+        advice_extreme_parallel: '警告：複数のFocusタスクは注意力を分散させます。並列作業を減らしましょう。',
+        advice_engaged: '明確な焦点があります。このペースを維持しましょう。',
+        advice_busy_backlog: '未処理タスクが多いです。整理や分割を検討してください。',
+      },
+      ko: {
+        relaxed: '여유로움',
+        extreme_parallel: '매우 높음 (병렬 작업 중)',
+        engaged: '충실함',
+        busy_backlog: '바쁨 (할 일 쌓임)',
+        advice_relaxed: '진행 상태가 양호합니다. 적절히 작업을 추가하세요.',
+        advice_extreme_parallel: '경고: 여러 집중 작업이 주의력을 분산시킵니다. 병렬 작업을 줄이세요.',
+        advice_engaged: '명확한 집중점이 있습니다. 이 속도를 유지하세요.',
+        advice_busy_backlog: '대기 작업이 많습니다. 정리하거나 장기 항목을 분할하세요.',
+      },
+      de: {
+        relaxed: 'Entspannt',
+        extreme_parallel: 'Extrem (Multitasking)',
+        engaged: 'Produktiv',
+        busy_backlog: 'Viel zu tun (Rückstand)',
+        advice_relaxed: 'Guter Fortschritt. Sie können Aufgaben hinzufügen.',
+        advice_extreme_parallel: 'Warnung: Mehrere Fokus-Aufgaben zerstreuen die Aufmerksamkeit. Parallelität reduzieren.',
+        advice_engaged: 'Klarer Fokus. Halten Sie das Tempo.',
+        advice_busy_backlog: 'Viele offene Aufgaben. Aufräumen oder langfristige Aufgaben aufteilen.',
+      },
+      fr: {
+        relaxed: 'Détendu',
+        extreme_parallel: 'Extrême (Multi-tâches)',
+        engaged: 'Engagé',
+        busy_backlog: 'Chargé (Retard)',
+        advice_relaxed: 'Bon progrès. Vous pouvez ajouter des tâches.',
+        advice_extreme_parallel: 'Attention : Plusieurs tâches Focus dispersent l\'attention. Réduisez le parallélisme.',
+        advice_engaged: 'Objectif clair. Gardez le rythme.',
+        advice_busy_backlog: 'Beaucoup de tâches en attente. Nettoyez ou divisez les éléments à long terme.',
+      },
+      es: {
+        relaxed: 'Relajado',
+        extreme_parallel: 'Extremo (Multitarea)',
+        engaged: 'Productivo',
+        busy_backlog: 'Ocupado (Acumulado)',
+        advice_relaxed: 'Buen progreso. Puedes añadir más tareas.',
+        advice_extreme_parallel: 'Advertencia: Múltiples tareas Focus dispersan la atención. Reduce el paralelismo.',
+        advice_engaged: 'Enfoque claro. Mantén el ritmo.',
+        advice_busy_backlog: 'Muchas tareas pendientes. Limpia o divide elementos a largo plazo.',
+      },
+      it: {
+        relaxed: 'Rilassato',
+        extreme_parallel: 'Estremo (Parallelismo)',
+        engaged: 'Impegnato',
+        busy_backlog: 'Occupato (Arretrati)',
+        advice_relaxed: 'Buon progresso. Puoi aggiungere attività.',
+        advice_extreme_parallel: 'Attenzione: Più attività Focus disperdono l\'attenzione. Riduci il parallelismo.',
+        advice_engaged: 'Obiettivo chiaro. Mantieni il ritmo.',
+        advice_busy_backlog: 'Molte attività in sospeso. Pulisci o dividi gli elementi a lungo termine.',
+      },
+      pt: {
+        relaxed: 'Relaxado',
+        extreme_parallel: 'Extremo (Multitarefa)',
+        engaged: 'Produtivo',
+        busy_backlog: 'Ocupado (Acúmulo)',
+        advice_relaxed: 'Bom progresso. Pode adicionar tarefas.',
+        advice_extreme_parallel: 'Aviso: Múltiplas tarefas Focus dispersam a atenção. Reduza o paralelismo.',
+        advice_engaged: 'Foco claro definido. Mantenha o ritmo.',
+        advice_busy_backlog: 'Muitas tarefas pendentes. Limpe ou divida itens de longo prazo.',
+      },
+      ru: {
+        relaxed: 'Спокойно',
+        extreme_parallel: 'Экстремально (Многозадачность)',
+        engaged: 'Продуктивно',
+        busy_backlog: 'Загруженно (Накопление)',
+        advice_relaxed: 'Хороший прогресс. Можно добавить задачи.',
+        advice_extreme_parallel: 'Внимание: Несколько Focus-задач рассеивают внимание. Уменьшите параллелизм.',
+        advice_engaged: 'Фокус определен. Сохраняйте темп.',
+        advice_busy_backlog: 'Много ожидающих задач. Очистите или разделите долгосрочные элементы.',
+      },
+      tr: {
+        relaxed: 'Rahat',
+        extreme_parallel: 'Aşırı (Çoklu Görev)',
+        engaged: 'Verimli',
+        busy_backlog: 'Yoğun (Birikmiş)',
+        advice_relaxed: 'İlerleme iyi görünüyor. Görev ekleyebilirsiniz.',
+        advice_extreme_parallel: 'Uyarı: Birden fazla Odak görevi dikkati dağıtır. Paralelliği azaltın.',
+        advice_engaged: 'Net bir odak belirlendi. Temponuzu koruyun.',
+        advice_busy_backlog: 'Çok fazla bekleyen görev. Temizleyin veya uzun vadeli öğeleri bölün.',
+      },
+    }
+
+    let lang = 'en'
+    let callId = 0
+    const pending = {}
+
+    function t(key) {
+      return (i18n[lang] || i18n.en)[key] || i18n.en[key] || key
+    }
+
+    function callPlugin(method, params) {
+      return new Promise((resolve, reject) => {
+        const id = ++callId
+        const timer = setTimeout(() => { delete pending[id]; reject(new Error('timeout')) }, 2000)
+        pending[id] = {
+          resolve: (v) => { clearTimeout(timer); resolve(v) },
+          reject: (e) => { clearTimeout(timer); reject(e) }
+        }
+        window.parent.postMessage({ type: 'plugin-call', id, method, params }, '*')
+      })
+    }
+
+    function getTagColor(data) {
+      if (data.focusCount > 2) return 'red'
+      if (data.totalPending > 15 && data.focusCount <= 2) return 'orange'
+      if (data.focusCount >= 1) return 'blue'
+      return 'green'
+    }
+
+    function render(data) {
+      if (!data) {
+        document.getElementById('root').classList.add('hidden')
+        return
+      }
+      const color = getTagColor(data)
+      const root = document.getElementById('root')
+      root.classList.remove('hidden')
+      root.innerHTML =
+        '<span class="tag tag-' + color + '">' + t(data.loadLevel) + '</span>' +
+        '<span class="stats">📋 ' + data.totalPending +
+        (data.focusCount > 0 ? ' · 🎯 ' + data.focusCount : '') +
+        '</span>' +
+        '<span class="advice">' + t('advice_' + data.loadLevel) + '</span>'
+    }
+
+    function analyzeTree(tree) {
+      if (!tree || !Array.isArray(tree)) return null
+      const stats = { totalPending: 0, focusCount: 0 }
+      const traverse = (nodes) => {
+        for (const node of nodes) {
+          const item = node?.todo
+          if (!item) {
+            if (node?.children?.length) traverse(node.children)
+            continue
+          }
+          if (!item.done) {
+            stats.totalPending++
+            if (item.focus) stats.focusCount++
+          }
+          if (node.children?.length) traverse(node.children)
+        }
+      }
+      traverse(tree)
+
+      let loadLevel = 'relaxed'
+      let isOverloaded = false
+      if (stats.focusCount > 2) {
+        loadLevel = 'extreme_parallel'
+        isOverloaded = true
+      } else if (stats.focusCount >= 1) {
+        loadLevel = 'engaged'
+      }
+      if (!isOverloaded && stats.totalPending > 15) {
+        loadLevel = 'busy_backlog'
+      }
+      return { loadLevel, totalPending: stats.totalPending, focusCount: stats.focusCount }
+    }
+
+    window.addEventListener('message', (event) => {
+      const msg = event.data
+      if (msg?.type === 'plugin-init') {
+        if (msg.theme) {
+          document.body.style.color = msg.theme.color
+          document.body.style.backgroundColor = 'transparent'
+          if (msg.theme.backgroundColor) {
+            const rgb = msg.theme.backgroundColor
+            const isDark = typeof rgb === 'string' && (
+              rgb.includes('rgb') ? parseInt(rgb.split(',')[0].replace(/\D/g, '')) < 128 :
+                rgb.startsWith('#') && parseInt(rgb.slice(1, 3), 16) < 128
+            )
+            if (isDark) document.body.classList.add('dark')
+          }
+        }
+        const detectedLang = (msg.lang || navigator.language || 'en').toLowerCase()
+        if (detectedLang.startsWith('zh-tw') || detectedLang.startsWith('zh-hant')) lang = 'zh-TW'
+        else if (detectedLang.startsWith('zh')) lang = 'zh'
+        else if (detectedLang.startsWith('ja')) lang = 'ja'
+        else if (detectedLang.startsWith('ko')) lang = 'ko'
+        else if (detectedLang.startsWith('de')) lang = 'de'
+        else if (detectedLang.startsWith('fr')) lang = 'fr'
+        else if (detectedLang.startsWith('es')) lang = 'es'
+        else if (detectedLang.startsWith('it')) lang = 'it'
+        else if (detectedLang.startsWith('pt')) lang = 'pt'
+        else if (detectedLang.startsWith('ru')) lang = 'ru'
+        else if (detectedLang.startsWith('tr')) lang = 'tr'
+        else lang = 'en'
+
+        window.parent.postMessage({ type: 'plugin-request-tree' }, '*')
+        return
+      }
+      if (msg?.type === 'plugin-result' && pending[msg.id]) {
+        const { resolve, reject } = pending[msg.id]
+        delete pending[msg.id]
+        msg.error ? reject(new Error(msg.error)) : resolve(msg.result)
+        return
+      }
+      if (msg?.type === 'plugin-tree-update') {
+        const tree = msg.tree
+        render(analyzeTree(Array.isArray(tree) ? tree : []))
+      }
+    })
+  </script>
 </body>
 
 </html>
