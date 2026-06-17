@@ -1,0 +1,38 @@
+service.js
+  s_4c0ea483fdd519::t_d5fc3ed29664ee 3-63,65-76
+package.json
+  s_4c0ea483fdd519::t_f5eaa2c573f8a7 2,4,7,10-12,14-15,24
+  h_eabc34dcaf7833 8-9
+  s_4c0ea483fdd519::t_8fe3adaec097c7 13
+view/index.html
+  h_eabc34dcaf7833 18,26,34-63,65-66,71,77,87,92,307
+  s_4c0ea483fdd519::t_e3645680ad40b3 7-17,19-25,27-33,64,67-70,72-76,78-86,88-91,93-96,100-306,308-329,331-345
+.agents/skills/todolist-knowledge/references/plugin-api.md
+  s_4c0ea483fdd519::t_689ad34d366651 105-125,154
+.agents/skills/todolist-knowledge/SKILL.md
+  s_4c0ea483fdd519::t_699c5913bacdd0 16
+  s_4c0ea483fdd519::t_84938e1c48be61 113-114,122
+.agents/skills/todolist-knowledge/references/plugin-view.md
+  s_4c0ea483fdd519::t_422fb3350c94b9 82-153
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.8",
+  "base_commit_sha": "32547bd1736a100be022f9beada2bd206570e43f",
+  "prompts": {},
+  "humans": {
+    "h_eabc34dcaf7833": {
+      "author": "muhai <muhai.li@tuya.com>"
+    }
+  },
+  "sessions": {
+    "s_4c0ea483fdd519": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4b90ecd6-f9de-4b7a-8c68-c1934b5358d2",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "muhai <muhai.li@tuya.com>"
+    }
+  }
+}
