@@ -1,6 +1,6 @@
 {
   "name": "@aicupa/plugin-todo-warning",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Workload warning indicator for Todolist",
   "main": "./service",
   "view": "./view",
