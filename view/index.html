@@ -14,6 +14,11 @@
       overflow: hidden;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       font-size: 12px;
+      cursor: no-drop;
+    }
+
+    body:hover {
+      background-color: color-mix(in srgb, currentColor 8%, transparent);
     }
 
     #root {
@@ -305,7 +310,7 @@
       if (msg?.type === 'plugin-init') {
         if (msg.theme) {
           document.body.style.color = msg.theme.color
-          document.body.style.backgroundColor = 'transparent'
+          // document.body.style.backgroundColor = 'transparent'
           if (msg.theme.backgroundColor) {
             const rgb = msg.theme.backgroundColor
             const isDark = typeof rgb === 'string' && (
