@@ -1,5 +1,3 @@
-const { createPlugin } = require("@aicupa/api");
-
 function analyzeWorkload(tree) {
   if (!tree || !Array.isArray(tree)) return null;
 
@@ -61,7 +59,11 @@ function analyzeWorkload(tree) {
   };
 }
 
-module.exports = createPlugin((api) => {
+/**
+ * @param {import('@aicupa/api').PluginApi} api
+ * @returns {import('@aicupa/api').Plugin}
+ */
+module.exports = (api) => {
   return {
     async analyze(params) {
       try {
@@ -74,4 +76,4 @@ module.exports = createPlugin((api) => {
       }
     },
   };
-});
+};
