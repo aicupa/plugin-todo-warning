@@ -10,7 +10,7 @@
   },
   "pluginContributes": {
     "views": {
-      "topbar": true
+      "head": true
     }
   },
   "publishConfig": {
